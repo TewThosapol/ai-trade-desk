@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OptionsDesk Pro</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#30363d;
+  --bd:#30363d;--bd2:#444c56;
+  --t1:#e6edf3;--t2:#8b949e;--t3:#656d76;
+  --g:#3fb950;--r:#f85149;--b:#58a6ff;--a:#d29922;--pu:#bc8cff;
+  --rd:rgba(248,81,73,.18);--gd:rgba(63,185,80,.18);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:14px;color:var(--t1);background:var(--bg);
+}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+body{min-height:100vh}
+.shell{max-width:1420px;margin:0 auto;padding:0 20px 60px}
+
+/* ── Header ── */
+.hdr{display:flex;align-items:center;justify-content:space-between;
+     padding:16px 0 18px;border-bottom:1px solid var(--bd);margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:11px}
+.logo-mark{width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+           background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.28);border-radius:8px}
+.logo-txt{font-size:16px;font-weight:600;letter-spacing:-.02em}
+.logo-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.hdr-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hdr-pnl{text-align:right}
+.hdr-pnl-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:3px}
+.hdr-pnl-val{font-size:24px;font-weight:700;font-family:'JetBrains Mono','Fira Code',monospace;line-height:1}
+.hdr-pnl-sub{font-size:10px;color:var(--t3);margin-top:3px;font-family:'JetBrains Mono','Fira Code',monospace}
+
+/* ── Buttons ── */
+.btn{padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:12px;
+     font-weight:500;transition:opacity .15s,background .15s;font-family:inherit;white-space:nowrap}
+.btn-g{background:var(--g);color:#0d1117}.btn-g:hover{opacity:.88}
+.btn-sec{background:var(--bg3);color:var(--t2);border:1px solid var(--bd2)}
+.btn-sec:hover{background:var(--bg4);color:var(--t1)}
+.btn-warn{background:rgba(248,81,73,.15);color:var(--r);border:1px solid rgba(248,81,73,.25)}
+.btn-warn:hover{background:rgba(248,81,73,.25)}
+.btn-lg{padding:10px 22px;font-size:14px}
+.btn-icon{padding:7px 10px;font-size:14px}
+
+/* ── Metric Cards ── */
+.metrics{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:9px;margin-bottom:16px}
+.mc{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:13px 15px;transition:border-color .15s}
+.mc:hover{border-color:var(--bd2)}
+.mc-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:9px}
+.mc-val{font-size:20px;font-weight:700;font-family:'JetBrains Mono','Fira Code',monospace;line-height:1;margin-bottom:4px}
+.mc-sub{font-size:10px;color:var(--t3);font-family:'JetBrains Mono','Fira Code',monospace}
+.mc.highlight{border-color:rgba(63,185,80,.3);background:rgba(63,185,80,.05)}
+.mc.highlight-r{border-color:rgba(248,81,73,.3);background:rgba(248,81,73,.05)}
+
+/* ── Charts ── */
+.charts-row{display:grid;gap:11px;margin-bottom:11px}
+.ca{grid-template-columns:2fr 1fr 1fr}
+.cb{grid-template-columns:1fr}
+.cc{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:14px}
+.cc-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:11px}
+
+/* ── Table ── */
+.tbl-card{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;
+      border-bottom:1px solid var(--bd);gap:8px;flex-wrap:wrap}
+.filters{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.filters input,.filters select{background:var(--bg3);border:1px solid var(--bd);border-radius:6px;
+  color:var(--t1);padding:5px 9px;font-size:12px;font-family:inherit;outline:none}
+.filters input:focus,.filters select:focus{border-color:var(--b);box-shadow:0 0 0 3px rgba(88,166,255,.12)}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{text-align:left;padding:7px 10px;font-size:8.5px;letter-spacing:.08em;color:var(--t3);
+   font-weight:500;text-transform:uppercase;border-bottom:1px solid var(--bd);
+   cursor:pointer;white-space:nowrap;user-select:none;transition:color .1s;background:var(--bg3)}
+th:hover{color:var(--t1)}
+th.no-sort{cursor:default}
+th.no-sort:hover{color:var(--t3)}
+td{padding:7px 10px;border-bottom:1px solid var(--bd);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr.dr:hover td{background:rgba(255,255,255,.025)}
+.th-asc::after{content:' ↑';opacity:.55}
+.th-dsc::after{content:' ↓';opacity:.55}
+
+/* ── Summary rows ── */
+tbody tr.sum-closed td{background:rgba(63,185,80,.06);border-top:2px solid rgba(63,185,80,.3)}
+tbody tr.sum-closed.neg-sum td{background:rgba(248,81,73,.06);border-top-color:rgba(248,81,73,.3)}
+tbody tr.sum-open td{background:rgba(88,166,255,.04);border-top:1px solid rgba(88,166,255,.2)}
+.sum-lbl{font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase}
+.sum-num{font-family:'JetBrains Mono','Fira Code',monospace;font-weight:700;font-size:12px}
+.sum-sub{display:block;font-size:8.5px;font-family:'JetBrains Mono','Fira Code',monospace;margin-top:2px;opacity:.6}
+
+/* ── Cell helpers ── */
+.mono{font-family:'JetBrains Mono','Fira Code',monospace}
+.thb-tiny{display:block;font-size:8.5px;font-family:'JetBrains Mono','Fira Code',monospace;
+          color:var(--t3);margin-top:2px;line-height:1.2}
+.note-txt{display:block;font-size:9px;color:var(--t3);margin-top:2px;max-width:140px;
+          overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── Badges ── */
+.bdg{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;
+     font-weight:600;letter-spacing:.02em;line-height:17px}
+.bdg-call{background:rgba(88,166,255,.15);color:var(--b)}
+.bdg-put{background:rgba(210,153,34,.18);color:var(--a)}
+.bdg-open{border:1px solid var(--bd2);color:var(--t3)}
+.bdg-win{background:rgba(63,185,80,.18);color:var(--g)}
+.bdg-loss{background:rgba(248,81,73,.18);color:var(--r)}
+.bdg-strike{background:rgba(188,140,255,.13);color:var(--pu);font-size:9.5px;
+            padding:2px 5px;border-radius:3px;font-family:'JetBrains Mono','Fira Code',monospace;font-weight:600}
+
+/* ── Action buttons ── */
+.ab{border:none;background:none;cursor:pointer;padding:3px 6px;border-radius:4px;
+    color:var(--t3);font-size:12px;transition:background .1s,color .1s;line-height:1}
+.ab:hover{background:var(--bg4);color:var(--t1)}
+.ab.del:hover{background:var(--rd);color:var(--r)}
+
+/* ── Rate / tool bar ── */
+.tool-bar{display:flex;align-items:center;gap:10px;padding:9px 13px;
+          background:var(--bg2);border:1px solid var(--bd);border-radius:8px;flex-wrap:wrap}
+.tool-bar input[type=number]{background:var(--bg3);border:1px solid var(--bd2);border-radius:5px;
+  color:var(--t1);padding:5px 8px;font-size:12px;width:80px;outline:none;font-family:inherit}
+.tool-bar input[type=number]:focus{border-color:var(--b)}
+.tool-sep{color:var(--bd2);user-select:none}
+
+/* ── Exp date colours ── */
+.exp-expired{color:var(--r)!important;font-weight:600}
+.exp-near{color:var(--a)!important;font-weight:600}
+
+/* ── Form ── */
+.form-wrap{max-width:620px;margin:0 auto}
+.bk-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);
+        cursor:pointer;padding:6px 11px;border-radius:6px;border:none;background:none;
+        margin-bottom:20px;transition:background .1s,color .1s;font-family:inherit}
+.bk-btn:hover{background:var(--bg3);color:var(--t1)}
+.form-title{font-size:17px;font-weight:600;margin-bottom:20px}
+.fsec{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:12px}
+.fsec-ttl{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+          color:var(--t3);margin-bottom:13px;padding-bottom:9px;border-bottom:1px solid var(--bd)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{font-size:11px;color:var(--t2);font-weight:500}
+.fi{background:var(--bg3);border:1px solid var(--bd2);border-radius:6px;color:var(--t1);
+    padding:8px 10px;font-size:13px;outline:none;width:100%;font-family:inherit;
+    transition:border-color .15s,box-shadow .15s;resize:vertical}
+.fi:focus{border-color:var(--b);box-shadow:0 0 0 3px rgba(88,166,255,.12)}
+.fi::placeholder{color:var(--t3)}
+textarea.fi{min-height:62px;line-height:1.5}
+.pbox{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:16px;text-align:center;margin-top:12px}
+.pbox-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:9px}
+.pbox-val{font-size:28px;font-weight:700;font-family:'JetBrains Mono','Fira Code',monospace;line-height:1}
+.pbox-sub{font-size:11px;color:var(--t3);margin-top:7px}
+.ferr{font-size:12px;color:var(--r);min-height:17px;margin-top:7px}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:22px;right:22px;padding:9px 16px;border-radius:8px;
+       font-size:13px;font-weight:500;z-index:9999;display:none;backdrop-filter:blur(8px)}
+
+/* ── Import overlay ── */
+#import-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);
+              z-index:9998;align-items:center;justify-content:center}
+#import-modal.show{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--bd2);border-radius:12px;
+           padding:24px;width:min(500px,90vw)}
+.modal-ttl{font-size:15px;font-weight:600;margin-bottom:12px}
+.modal-sub{font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6}
+
+.empty{padding:2.5rem;text-align:center;color:var(--t3)}
+.pos{color:var(--g)}.neg{color:var(--r)}
+
+@media(max-width:1100px){.ca{grid-template-columns:1fr 1fr};.metrics{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:800px){.ca{grid-template-columns:1fr};.metrics{grid-template-columns:repeat(3,1fr)};.fgrid{grid-template-columns:1fr}}
+@media(max-width:500px){.metrics{grid-template-columns:repeat(2,1fr)};.hdr-pnl-val{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<div id="toast"></div>
+
+<!-- Import Modal -->
+<div id="import-modal">
+  <div class="modal-box">
+    <p class="modal-ttl">📥 Import Trades (JSON)</p>
+    <p class="modal-sub">วาง JSON ที่ export มาได้เลย — ระบบจะ <strong>เพิ่ม</strong> เข้าไปในข้อมูลปัจจุบัน (ID ซ้ำจะถูกข้าม)<br>
+    หรือเลือก "Replace All" เพื่อแทนที่ข้อมูลทั้งหมด</p>
+    <textarea class="fi" id="import-json" rows="7" placeholder='[{"id":1,"ticker":"CRML",...}]' style="margin-bottom:10px;font-size:11px"></textarea>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-g" onclick="doImport(false)" style="flex:1">Merge (เพิ่ม)</button>
+      <button class="btn btn-warn" onclick="doImport(true)">Replace All</button>
+      <button class="btn btn-sec" onclick="closeImport()">Cancel</button>
+    </div>
+    <p id="import-err" style="font-size:11px;color:var(--r);margin-top:8px;min-height:16px"></p>
+  </div>
+</div>
+
+<!-- ════ MAIN VIEW ════ -->
+<div id="V-main">
+  <div class="hdr">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg width="15" height="15" viewBox="0 0 16 16">
+          <polyline points="1,12 5,7 8,9 11,4 15,6" fill="none"
+            stroke="#3fb950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-txt">OptionsDesk Pro</div>
+        <div class="logo-sub" id="h-date"></div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-pnl">
+        <div class="hdr-pnl-lbl">Closed P&L</div>
+        <div class="hdr-pnl-val" id="h-pnl">—</div>
+        <div class="hdr-pnl-sub" id="h-pnl-sub"></div>
+      </div>
+      <button class="btn btn-sec btn-icon" onclick="exportJSON()" title="Export JSON">⬇ Export</button>
+      <button class="btn btn-sec btn-icon" onclick="openImport()" title="Import JSON">⬆ Import</button>
+      <button class="btn btn-g" onclick="openForm(null)">+ New Trade</button>
+    </div>
+  </div>
+
+  <div class="metrics" id="metrics-grid"></div>
+
+  <div class="charts-row ca">
+    <div class="cc">
+      <div class="cc-lbl">Cumulative Closed P&L</div>
+      <div style="position:relative;height:185px">
+        <canvas id="cCum" role="img" aria-label="Cumulative P&L line chart"></canvas>
+      </div>
+    </div>
+    <div class="cc">
+      <div class="cc-lbl">Call vs Put</div>
+      <div style="position:relative;height:185px">
+        <canvas id="cCP" role="img" aria-label="Call vs Put"></canvas>
+      </div>
+    </div>
+    <div class="cc">
+      <div class="cc-lbl">Win / Loss / Open</div>
+      <div style="position:relative;height:185px">
+        <canvas id="cWL" role="img" aria-label="Win Loss Open"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="charts-row cb">
+    <div class="cc">
+      <div class="cc-lbl">Closed P&L by Ticker (USD)</div>
+      <div style="position:relative;height:140px">
+        <canvas id="cTk" role="img" aria-label="P&L by ticker"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="tbl-card">
+    <div class="tbar">
+      <div class="filters">
+        <input type="text" id="sq" placeholder="🔍 Ticker…" style="width:130px" oninput="rTbl()">
+        <select id="flt" onchange="rTbl()">
+          <option value="">All types</option>
+          <option>Call</option><option>Put</option>
+        </select>
+        <select id="fls" onchange="rTbl()">
+          <option value="">All status</option>
+          <option value="open">Open</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+      <span style="font-size:11px;color:var(--t3)" id="rc-lbl"></span>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th onclick="srt('id')" data-k="id">#</th>
+          <th onclick="srt('ticker')" data-k="ticker">Ticker</th>
+          <th class="no-sort">Type</th>
+          <th onclick="srt('strikePrice')" data-k="strikePrice" style="text-align:right">Strike</th>
+          <th onclick="srt('underlyingPrice')" data-k="underlyingPrice" style="text-align:right">Underlying</th>
+          <th onclick="srt('expDate')" data-k="expDate">Exp Date</th>
+          <th onclick="srt('buyDate')" data-k="buyDate">Buy Date</th>
+          <th onclick="srt('buyPrice')" data-k="buyPrice" style="text-align:right">Buy $</th>
+          <th style="text-align:center" class="no-sort">Qty</th>
+          <th onclick="srt('sellDate')" data-k="sellDate">Sell Date</th>
+          <th onclick="srt('sellPrice')" data-k="sellPrice" style="text-align:right">Sell $</th>
+          <th onclick="srt('_dit')" data-k="_dit" style="text-align:center">DIT</th>
+          <th onclick="srt('_pnl')" data-k="_pnl" style="text-align:right">P&L</th>
+          <th class="no-sort">Result</th>
+          <th style="text-align:right;padding-right:12px" class="no-sort">Actions</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tool bar -->
+  <div class="tool-bar">
+    <span style="font-size:11px;color:var(--t3);letter-spacing:.04em">USD/THB</span>
+    <input type="number" id="thbr" value="32.16" step="0.01" oninput="rAll()">
+    <span class="tool-sep">·</span>
+    <span class="mono" style="font-size:12px;color:var(--t3)" id="thb-disp"></span>
+    <span class="tool-sep" style="margin-left:auto">·</span>
+    <span style="font-size:11px;color:var(--t3)">⚠ Expired  ⚡ ≤3d</span>
+    <span class="tool-sep">·</span>
+    <span style="font-size:11px;color:var(--t3)">DIT = Days in Trade</span>
+  </div>
+</div>
+
+<!-- ════ FORM VIEW ════ -->
+<div id="V-form" style="display:none">
+  <button class="bk-btn" onclick="closeForm()">← Back to Dashboard</button>
+  <div class="form-wrap">
+    <p class="form-title" id="ftitle">New Trade</p>
+
+    <div class="fsec">
+      <p class="fsec-ttl">Option Contract</p>
+      <div class="fgrid">
+        <div class="fg">
+          <label class="fl">Ticker Symbol *</label>
+          <input class="fi" type="text" id="fTk" list="tk-dl"
+            placeholder="CRML, PLTR…" oninput="this.value=this.value.toUpperCase();cPrev()">
+          <datalist id="tk-dl"></datalist>
+        </div>
+        <div class="fg">
+          <label class="fl">Option Type *</label>
+          <select class="fi" id="fTp" onchange="cPrev()">
+            <option value="Call">Call</option>
+            <option value="Put">Put</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Strike Price ($) — ราคา Strike</label>
+          <input class="fi" type="number" id="fSk" step="0.01" min="0" placeholder="5.50">
+        </div>
+        <div class="fg">
+          <label class="fl">Expiry Date — วันหมดอายุ</label>
+          <input class="fi" type="date" id="fEd">
+        </div>
+        <div class="fg">
+          <label class="fl">Underlying Price ($) — ราคาหุ้นตอนซื้อ</label>
+          <input class="fi" type="number" id="fUp" step="0.01" min="0" placeholder="12.50">
+        </div>
+        <div class="fg" style="grid-column:1/-1">
+          <label class="fl">Notes / Trade Thesis — เหตุผลที่เข้า trade</label>
+          <textarea class="fi" id="fNotes" placeholder="เช่น Breakout above 200MA, catalyst: earnings beat, target +50%…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="fsec">
+      <p class="fsec-ttl">Buy Details</p>
+      <div class="fgrid">
+        <div class="fg">
+          <label class="fl">Buy Date *</label>
+          <input class="fi" type="date" id="fBd" oninput="cPrev()">
+        </div>
+        <div class="fg">
+          <label class="fl">Contracts (Qty) *</label>
+          <input class="fi" type="number" id="fQty" value="1" min="1" oninput="cPrev()">
+        </div>
+        <div class="fg" style="grid-column:1/-1">
+          <label class="fl">Total Buy Price (USD) * — ราคาพรีเมี่ยมรวมที่จ่าย</label>
+          <input class="fi" type="number" id="fBp" step="0.01" placeholder="0.00" oninput="cPrev()">
+        </div>
+      </div>
+    </div>
+
+    <div class="fsec">
+      <div style="display:flex;align-items:center;justify-content:space-between;
+                  margin-bottom:13px;padding-bottom:9px;border-bottom:1px solid var(--bd)">
+        <span class="fsec-ttl" style="margin:0;padding:0;border:none">Sell Details</span>
+        <span style="font-size:10px;color:var(--t3)">เว้นว่าง = Open position</span>
+      </div>
+      <div class="fgrid">
+        <div class="fg">
+          <label class="fl">Sell Date</label>
+          <input class="fi" type="date" id="fSd" oninput="cPrev()">
+        </div>
+        <div class="fg">
+          <label class="fl">Contracts Sold</label>
+          <input class="fi" type="number" id="fSq" min="1" placeholder="จำนวน" oninput="cPrev()">
+        </div>
+        <div class="fg" style="grid-column:1/-1">
+          <label class="fl">Total Sell Price (USD) — ราคารวมที่ได้รับ</label>
+          <input class="fi" type="number" id="fSp" step="0.01" placeholder="0.00" oninput="cPrev()">
+        </div>
+      </div>
+      <div class="pbox">
+        <div class="pbox-lbl">P&L Preview</div>
+        <div class="pbox-val" id="prev-val" style="color:var(--t3)">—</div>
+        <div class="pbox-sub" id="prev-sub"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <button class="btn btn-g btn-lg" onclick="saveTrd()" id="sbtn" style="flex:1">Save Trade</button>
+      <button class="btn btn-sec btn-lg" onclick="closeForm()">Cancel</button>
+    </div>
+    <p class="ferr" id="ferr"></p>
+  </div>
+</div>
+</div><!-- /shell -->
+
+<script>
+/* ══════════════════════════════════════════
+   SEED DATA — all 34 records (from localStorage)
+══════════════════════════════════════════ */
+const SEED = [
+  {id:1, ticker:'CRML',type:'Call',strikePrice:8.50, expDate:'2026-04-17',underlyingPrice:null,notes:'',buyDate:'2026-03-30',qty:1, buyPrice:25.06, sellDate:'2026-04-01',sellQty:1, sellPrice:54.93},
+  {id:2, ticker:'CRML',type:'Call',strikePrice:9.00, expDate:'2026-04-17',underlyingPrice:null,notes:'',buyDate:'2026-03-30',qty:2, buyPrice:32.10, sellDate:'2026-04-01',sellQty:2, sellPrice:79.89},
+  {id:3, ticker:'ONDS',type:'Call',strikePrice:10.50,expDate:'2026-04-17',underlyingPrice:null,notes:'',buyDate:'2026-03-30',qty:1, buyPrice:19.06, sellDate:'2026-04-01',sellQty:1, sellPrice:29.93},
+  {id:4, ticker:'LUNR',type:'Call',strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-06',qty:1, buyPrice:30.06, sellDate:'2026-04-06',sellQty:1, sellPrice:11.93},
+  {id:5, ticker:'SBAC',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-06',qty:1, buyPrice:35.06, sellDate:'2026-04-17',sellQty:1, sellPrice:0.00},
+  {id:6, ticker:'KTOS',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-06',qty:2, buyPrice:20.12, sellDate:'2026-04-08',sellQty:2, sellPrice:9.86},
+  {id:7, ticker:'PLUG',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-06',qty:5, buyPrice:9.25,  sellDate:'2026-04-08',sellQty:5, sellPrice:5.71},
+  {id:8, ticker:'PLUG',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-06',qty:5, buyPrice:60.25, sellDate:'2026-04-08',sellQty:5, sellPrice:89.73},
+  {id:10,ticker:'USAR',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-08',qty:1, buyPrice:14.06, sellDate:'2026-04-09',sellQty:1, sellPrice:12.93},
+  {id:11,ticker:'ONDS',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-08',qty:1, buyPrice:23.06, sellDate:'2026-04-09',sellQty:1, sellPrice:42.93},
+  {id:12,ticker:'RKLB',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-08',qty:1, buyPrice:21.06, sellDate:'2026-04-09',sellQty:1, sellPrice:30.93},
+  {id:13,ticker:'CRML',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-08',qty:2, buyPrice:20.10, sellDate:null,sellQty:null,sellPrice:null},
+  {id:14,ticker:'SIDU',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-08',qty:2, buyPrice:24.10, sellDate:'2026-04-09',sellQty:1, sellPrice:21.86},
+  {id:15,ticker:'EOSE',type:'Call',strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-09',qty:1, buyPrice:19.06, sellDate:'2026-04-09',sellQty:1, sellPrice:34.93},
+  {id:16,ticker:'PLTR',type:'Call',strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-09',qty:2, buyPrice:56.10, sellDate:'2026-04-15',sellQty:2, sellPrice:43.89},
+  {id:17,ticker:'EOSE',type:'Call',strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-10',qty:1, buyPrice:18.06, sellDate:'2026-04-17',sellQty:1, sellPrice:14.93},
+  {id:18,ticker:'SIDU',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-10',qty:3, buyPrice:27.15, sellDate:null,sellQty:null,sellPrice:null},
+  {id:19,ticker:'NBIS',type:'Call',strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-13',qty:2, buyPrice:56.10, sellDate:null,sellQty:null,sellPrice:null},
+  {id:20,ticker:'NVDA',type:'Call',strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-13',qty:2, buyPrice:48.10, sellDate:null,sellQty:null,sellPrice:null},
+  {id:21,ticker:'ORCL',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-13',qty:1, buyPrice:208.10,sellDate:null,sellQty:null,sellPrice:null},
+  {id:22,ticker:'HIMS',type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-14',qty:2, buyPrice:74.10, sellDate:null,sellQty:null,sellPrice:null},
+  {id:23,ticker:'BE',  type:'Put', strikePrice:null, expDate:null,         underlyingPrice:null,notes:'',buyDate:'2026-04-14',qty:4, buyPrice:108.20,sellDate:null,sellQty:null,sellPrice:null},
+  {id:24,ticker:'EOSE',type:'Put', strikePrice:5.00, expDate:'2026-04-17',underlyingPrice:null,notes:'',buyDate:'2026-04-09',qty:1, buyPrice:26.06, sellDate:'2026-04-15',sellQty:1, sellPrice:1.93},
+  {id:25,ticker:'EOSE',type:'Put', strikePrice:6.50, expDate:'2026-04-24',underlyingPrice:null,notes:'',buyDate:'2026-04-15',qty:4, buyPrice:90.20, sellDate:'2026-04-15',sellQty:4, sellPrice:111.78},
+  {id:26,ticker:'EOSE',type:'Call',strikePrice:7.50, expDate:'2026-04-24',underlyingPrice:null,notes:'',buyDate:'2026-04-15',qty:2, buyPrice:102.10,sellDate:'2026-04-17',sellQty:2, sellPrice:99.89},
+  {id:27,ticker:'HIMS',type:'Call',strikePrice:26.00,expDate:'2026-04-24',underlyingPrice:null,notes:'',buyDate:'2026-04-16',qty:1, buyPrice:162.00,sellDate:'2026-04-16',sellQty:1, sellPrice:219.93},
+  {id:28,ticker:'CRML',type:'Call',strikePrice:12.50,expDate:'2026-04-24',underlyingPrice:null,notes:'',buyDate:'2026-04-17',qty:1, buyPrice:85.06, sellDate:'2026-04-17',sellQty:1, sellPrice:134.93},
+  {id:29,ticker:'HIMS',type:'Call',strikePrice:30.00,expDate:'2026-04-24',underlyingPrice:null,notes:'',buyDate:'2026-04-17',qty:1, buyPrice:151.06,sellDate:'2026-04-20',sellQty:1, sellPrice:236.93},
+  {id:30,ticker:'ASTS',type:'Call',strikePrice:78.00,expDate:'2026-04-24',underlyingPrice:null,notes:'',buyDate:'2026-04-20',qty:1, buyPrice:345.06,sellDate:'2026-04-21',sellQty:1, sellPrice:769.93},
+  {id:31,ticker:'HIMS',type:'Call',strikePrice:29.00,expDate:'2026-05-01',underlyingPrice:null,notes:'',buyDate:'2026-04-21',qty:1, buyPrice:206.05,sellDate:'2026-04-23',sellQty:1, sellPrice:273.93},
+  {id:32,ticker:'CRML',type:'Call',strikePrice:11.50,expDate:'2026-05-01',underlyingPrice:null,notes:'',buyDate:'2026-04-22',qty:4, buyPrice:320.19,sellDate:null,sellQty:null,sellPrice:null},
+  {id:33,ticker:'EOSE',type:'Call',strikePrice:7.50, expDate:'2026-05-01',underlyingPrice:null,notes:'',buyDate:'2026-04-23',qty:3, buyPrice:120.15,sellDate:null,sellQty:null,sellPrice:null},
+  {id:34,ticker:'ORCL',type:'Call',strikePrice:190.00,expDate:'2026-05-01',underlyingPrice:null,notes:'',buyDate:'2026-04-22',qty:1, buyPrice:670.00,sellDate:null,sellQty:null,sellPrice:null},
+  {id:35,ticker:'ASTS',type:'Call',strikePrice:82.00,expDate:'2026-05-01',underlyingPrice:null,notes:'',buyDate:'2026-04-23',qty:1, buyPrice:390.06,sellDate:null,sellQty:null,sellPrice:null},
+];
+
+/* ══════════════════════════════════════════  STATE  */
+const SKEY = 'optionsdesk-pro-v5';   /* v5 = new fields (notes, underlyingPrice, DIT) */
+let T=[], eid=null, sk='id', sd=1;
+let xCum=null,xCP=null,xWL=null,xTk=null;
+
+/* ══════════════════════════════════════════  HELPERS  */
+const PNL_CLOSED = t => t.sellPrice!=null ? +(t.sellPrice - t.buyPrice).toFixed(2) : null;
+const PNL        = t => t.sellPrice!=null ? +(t.sellPrice - t.buyPrice).toFixed(2) : -t.buyPrice;
+const RATE       = () => parseFloat(document.getElementById('thbr').value)||32.16;
+const FMT        = (n,d=2) => (n>=0?'+':'')+n.toFixed(d);
+const G          = id => document.getElementById(id);
+
+function DIT(t){
+  if(!t.buyDate) return null;
+  const a = new Date(t.buyDate);
+  const b = t.sellDate ? new Date(t.sellDate) : new Date();
+  b.setHours(0,0,0,0); a.setHours(0,0,0,0);
+  return Math.round((b-a)/(86400000));
+}
+
+/* ══════════════════════════════════════════  PERSIST  */
+function load(){
+  try{
+    /* Try v5 first */
+    let s = localStorage.getItem(SKEY);
+    if(s) return JSON.parse(s);
+    /* Migrate from v4 if exists */
+    const old = localStorage.getItem('optionsdesk-pro-v4');
+    if(old){
+      const d = JSON.parse(old).map(t=>({
+        underlyingPrice:null, notes:'', ...t
+      }));
+      localStorage.setItem(SKEY, JSON.stringify(d));
+      localStorage.removeItem('optionsdesk-pro-v4');
+      return d;
+    }
+    return null;
+  }catch{return null;}
+}
+function persist(){try{localStorage.setItem(SKEY,JSON.stringify(T));}catch{}}
+
+/* ══════════════════════════════════════════  INIT  */
+function init(){
+  T = load() || JSON.parse(JSON.stringify(SEED));
+  G('h-date').textContent = new Date().toLocaleDateString('th-TH',
+    {year:'numeric',month:'long',day:'numeric'});
+  rAll();
+}
+function rAll(){ rMet(); rCharts(); rTbl(); rDatalist(); }
+
+/* ══════════════════════════════════════════  METRICS  */
+function rMet(){
+  const rt    = RATE();
+  const cls   = T.filter(t=>t.sellPrice!=null);
+  const opn   = T.filter(t=>t.sellPrice==null);
+  const wins  = cls.filter(t=>PNL(t)>0);
+  const wr    = cls.length ? Math.round(wins.length/cls.length*100) : 0;
+  const closedPnl = +cls.reduce((s,t)=>s+PNL(t),0).toFixed(2);
+  const openRisk  = +opn.reduce((s,t)=>s+t.buyPrice,0).toFixed(2);
+  const best  = cls.length ? Math.max(...cls.map(t=>PNL(t))) : 0;
+  const avgW  = wins.length ? +(wins.reduce((s,t)=>s+PNL(t),0)/wins.length).toFixed(2) : null;
+  const col   = closedPnl>=0 ? '#3fb950' : '#f85149';
+
+  G('h-pnl').innerHTML = `<span style="color:${col}">${FMT(closedPnl)}<span style="font-size:13px;opacity:.5"> USD</span></span>`;
+  G('h-pnl-sub').textContent = `≈ ${(closedPnl>=0?'+':'')}${Math.round(closedPnl*rt).toLocaleString()} THB`;
+  G('thb-disp').textContent  = `Closed P&L ≈ ${(closedPnl>=0?'+':'')}${Math.round(closedPnl*rt).toLocaleString()} THB  ·  Rate ${rt.toFixed(2)}`;
+
+  G('metrics-grid').innerHTML = [
+    ['Closed P&L', `<span style="color:${col}">${FMT(closedPnl)}</span>`,
+      `${(closedPnl>=0?'+':'')}${Math.round(closedPnl*rt).toLocaleString()} THB`, closedPnl>=0?'highlight':'highlight-r'],
+    ['Win Rate', `${wr}%`, `${wins.length}W · ${cls.length-wins.length}L`, ''],
+    ['Closed', `${cls.length}`, `of ${T.length} total`, ''],
+    ['Open', `<span style="color:#8b949e">${opn.length}</span>`, 'positions', ''],
+    ['Open Risk', `<span style="color:#f85149">-${openRisk.toFixed(0)}</span>`,
+      `${Math.round(openRisk*rt).toLocaleString()} THB`, ''],
+    ['Best Trade', `<span style="color:#3fb950">${best>=0?'+':''}${best.toFixed(2)}</span>`, 'USD', ''],
+    ['Avg Win', avgW?`<span style="color:#3fb950">+${avgW.toFixed(2)}</span>`:'—', 'USD', ''],
+  ].map(([l,v,s,extra])=>`<div class="mc ${extra}">
+    <div class="mc-lbl">${l}</div>
+    <div class="mc-val">${v}</div>
+    <div class="mc-sub">${s}</div>
+  </div>`).join('');
+}
+
+/* ══════════════════════════════════════════  CHARTS  */
+function rCharts(){
+  const gc='rgba(255,255,255,.055)', tc='rgba(255,255,255,.3)';
+  const tip={backgroundColor:'#1c2128',borderColor:'#444c56',borderWidth:1,
+             titleColor:'#e6edf3',bodyColor:'#8b949e',padding:10,cornerRadius:6};
+
+  /* Cumulative — closed only */
+  const cls = T.filter(t=>t.sellPrice!=null);
+  const dm={};
+  cls.forEach(t=>{ const d=t.sellDate; dm[d]=(dm[d]||0)+PNL(t); });
+  const days=Object.keys(dm).sort();
+  let cum=0;
+  const pts=days.map(d=>{cum=+(cum+dm[d]).toFixed(2);return cum;});
+
+  if(xCum)xCum.destroy();
+  xCum=new Chart(G('cCum'),{
+    type:'line',
+    data:{labels:days.map(d=>d.slice(5)),datasets:[{
+      data:pts, borderColor:'#3fb950', borderWidth:2, tension:.38, fill:true,
+      backgroundColor:ctx=>{
+        const g=ctx.chart.ctx.createLinearGradient(0,0,0,175);
+        g.addColorStop(0,'rgba(63,185,80,.2)'); g.addColorStop(1,'rgba(63,185,80,.01)'); return g;},
+      pointBackgroundColor:pts.map(v=>v>=0?'#3fb950':'#f85149'),
+      pointRadius:4, pointHoverRadius:6
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...tip,callbacks:{
+        label:c=>`Cumulative: $${c.raw}`}}},
+      scales:{y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`$${v}`}},
+              x:{grid:{display:false},ticks:{color:tc,font:{size:10}}}}}
+  });
+
+  const nC=T.filter(t=>t.type==='Call').length, nP=T.filter(t=>t.type==='Put').length;
+  if(xCP)xCP.destroy();
+  xCP=new Chart(G('cCP'),{
+    type:'doughnut',
+    data:{labels:[`Call (${nC})`,`Put (${nP})`],
+          datasets:[{data:[nC,nP],backgroundColor:['#58a6ff','#d29922'],
+                     borderColor:'#161b22',borderWidth:3,hoverOffset:5}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'66%',
+      plugins:{legend:{position:'bottom',labels:{color:tc,font:{size:10},boxWidth:10,padding:11}},
+               tooltip:{...tip}}}
+  });
+
+  const w=cls.filter(t=>PNL(t)>0).length, l=cls.filter(t=>PNL(t)<=0).length,
+        o=T.filter(t=>t.sellPrice==null).length;
+  if(xWL)xWL.destroy();
+  xWL=new Chart(G('cWL'),{
+    type:'doughnut',
+    data:{labels:[`Win (${w})`,`Loss (${l})`,`Open (${o})`],
+          datasets:[{data:[w,l,o],backgroundColor:['#3fb950','#f85149','#6e7681'],
+                     borderColor:'#161b22',borderWidth:3,hoverOffset:5}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'66%',
+      plugins:{legend:{position:'bottom',labels:{color:tc,font:{size:10},boxWidth:10,padding:11}},
+               tooltip:{...tip}}}
+  });
+
+  /* Only closed trades per ticker */
+  const bTk={};
+  cls.forEach(t=>{bTk[t.ticker]=(bTk[t.ticker]||0)+PNL(t);});
+  const tks=Object.keys(bTk).sort((a,b)=>bTk[b]-bTk[a]);
+  if(xTk)xTk.destroy();
+  xTk=new Chart(G('cTk'),{
+    type:'bar',
+    data:{labels:tks,datasets:[{
+      data:tks.map(t=>+bTk[t].toFixed(2)),
+      backgroundColor:tks.map(t=>bTk[t]>=0?'rgba(63,185,80,.8)':'rgba(248,81,73,.8)'),
+      borderRadius:4,borderWidth:0
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...tip,callbacks:{label:c=>`P&L: $${c.raw}`}}},
+      scales:{y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`$${v}`}},
+              x:{grid:{display:false},ticks:{color:tc,font:{size:10},maxRotation:0,autoSkip:false}}}}
+  });
+}
+
+/* ══════════════════════════════════════════  EXP CLASS  */
+function expClass(d){
+  if(!d) return '';
+  const today=new Date(); today.setHours(0,0,0,0);
+  const diff=Math.round((new Date(d)-today)/86400000);
+  if(diff<0) return 'exp-expired';
+  if(diff<=3) return 'exp-near';
+  return '';
+}
+
+/* ══════════════════════════════════════════  TABLE  */
+function rTbl(){
+  const q  = G('sq').value.toUpperCase();
+  const ft = G('flt').value;
+  const fs = G('fls').value;
+
+  let rows = T.filter(t=>{
+    if(q && !t.ticker.includes(q)) return false;
+    if(ft && t.type!==ft) return false;
+    if(fs==='open'   && t.sellPrice!=null) return false;
+    if(fs==='closed' && t.sellPrice==null) return false;
+    return true;
+  });
+
+  rows = [...rows].sort((a,b)=>{
+    let av = sk==='_pnl'?PNL(a): sk==='_dit'?DIT(a):a[sk];
+    let bv = sk==='_pnl'?PNL(b): sk==='_dit'?DIT(b):b[sk];
+    av=av??''; bv=bv??'';
+    return sd*(av>bv?1:av<bv?-1:0);
+  });
+
+  document.querySelectorAll('th[data-k]').forEach(th=>{
+    th.className = th.dataset.k===sk ? (sd===1?'th-asc':'th-dsc') : '';
+  });
+  G('rc-lbl').textContent = `${rows.length} / ${T.length} trades`;
+
+  if(!rows.length){
+    G('tbody').innerHTML=`<tr><td colspan="15" class="empty">No trades match the current filters.</td></tr>`;
+    return;
+  }
+
+  const rt = RATE();
+
+  /* ── Closed-only totals ── */
+  const closedRows = rows.filter(t=>t.sellPrice!=null);
+  const openRows   = rows.filter(t=>t.sellPrice==null);
+
+  const cBuy  = +closedRows.reduce((s,t)=>s+t.buyPrice,0).toFixed(2);
+  const cSell = +closedRows.reduce((s,t)=>s+t.sellPrice,0).toFixed(2);
+  const cQty  = closedRows.reduce((s,t)=>s+(t.qty||0),0);
+  const cPnl  = +closedRows.reduce((s,t)=>s+PNL(t),0).toFixed(2);
+  const cColor= cPnl>=0 ? '#3fb950' : '#f85149';
+  const cBdr  = cPnl>=0 ? 'sum-closed' : 'sum-closed neg-sum';
+
+  const oBuy  = +openRows.reduce((s,t)=>s+t.buyPrice,0).toFixed(2);
+  const oQty  = openRows.reduce((s,t)=>s+(t.qty||0),0);
+
+  /* ── Rows HTML ── */
+  const rowsHTML = rows.map(t=>{
+    const p   = PNL(t);
+    const cl  = t.sellPrice!=null;
+    const win = cl && p>0;
+    const cc  = p>=0 ? '#3fb950' : '#f85149';
+    const ec  = expClass(t.expDate);
+    const dit = DIT(t);
+
+    const buyCell = `<td class="mono" style="text-align:right">
+      $${t.buyPrice.toFixed(2)}
+      <span class="thb-tiny">≈${Math.round(t.buyPrice*rt).toLocaleString()}฿</span>
+    </td>`;
+
+    const sellCell = cl
+      ? `<td class="mono" style="text-align:right">
+          $${t.sellPrice.toFixed(2)}
+          <span class="thb-tiny">≈${Math.round(t.sellPrice*rt).toLocaleString()}฿</span>
+        </td>`
+      : `<td style="text-align:right;color:var(--t3)">—</td>`;
+
+    const pnlCell = `<td class="mono" style="text-align:right">
+      <span style="font-weight:700;color:${cc}">${FMT(p)}</span>
+      <span class="thb-tiny" style="color:${cc}">${p>=0?'+':''}${Math.round(p*rt).toLocaleString()}฿</span>
+    </td>`;
+
+    const ditCell = `<td class="mono" style="text-align:center;color:${cl?'var(--t2)':'var(--b)'}">
+      ${dit!==null?dit+'d':'—'}
+    </td>`;
+
+    return `<tr class="dr">
+      <td class="mono" style="color:var(--t3);font-size:11px">${t.id}</td>
+      <td style="font-weight:600">
+        ${t.ticker}
+        ${t.notes?`<span class="note-txt" title="${t.notes.replace(/"/g,'&quot;')}">📝 ${t.notes}</span>`:''}
+      </td>
+      <td><span class="bdg ${t.type==='Call'?'bdg-call':'bdg-put'}">${t.type}</span></td>
+      <td style="text-align:right">
+        ${t.strikePrice!=null?`<span class="bdg-strike">$${t.strikePrice.toFixed(2)}</span>`:'<span style="color:var(--t3)">—</span>'}
+      </td>
+      <td class="mono" style="text-align:right;color:var(--t2)">
+        ${t.underlyingPrice!=null?'$'+t.underlyingPrice.toFixed(2):'—'}
+      </td>
+      <td class="mono ${ec}">
+        ${t.expDate||'—'}${ec==='exp-expired'?' ⚠':ec==='exp-near'?' ⚡':''}
+      </td>
+      <td class="mono">${t.buyDate||'—'}</td>
+      ${buyCell}
+      <td class="mono" style="text-align:center">${t.qty}</td>
+      <td class="mono">${t.sellDate||'—'}</td>
+      ${sellCell}
+      ${ditCell}
+      ${pnlCell}
+      <td><span class="bdg ${!cl?'bdg-open':win?'bdg-win':'bdg-loss'}">${!cl?'Open':win?'Win':'Loss'}</span></td>
+      <td style="text-align:right;padding-right:10px;white-space:nowrap">
+        <button class="ab" onclick="openForm(${t.id})" title="Edit">✎</button>
+        <button class="ab del" onclick="delTrd(${t.id})" title="Delete">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  /* ── Closed summary row ── */
+  const closedSumRow = closedRows.length ? `<tr class="${cBdr}">
+    <td colspan="2" style="padding-left:12px">
+      <span class="sum-lbl" style="color:${cColor}">✓ Closed</span>
+      <span class="sum-sub" style="color:var(--t3)">${closedRows.length} trades</span>
+    </td>
+    <td></td><td></td><td></td><td></td>
+    <td style="text-align:right">
+      <span class="sum-num" style="color:var(--b)">$${cBuy.toFixed(2)}</span>
+      <span class="sum-sub" style="color:var(--b)">${Math.round(cBuy*rt).toLocaleString()}฿</span>
+    </td>
+    <td style="text-align:center">
+      <span class="sum-num" style="color:var(--t1)">${cQty}</span>
+      <span class="sum-sub" style="color:var(--t3)">contracts</span>
+    </td>
+    <td></td>
+    <td style="text-align:right">
+      <span class="sum-num" style="color:var(--b)">$${cSell.toFixed(2)}</span>
+      <span class="sum-sub" style="color:var(--b)">${Math.round(cSell*rt).toLocaleString()}฿</span>
+    </td>
+    <td></td>
+    <td style="text-align:right">
+      <span class="sum-num" style="color:${cColor}">${FMT(cPnl)} USD</span>
+      <span class="sum-sub" style="color:${cColor}">${cPnl>=0?'+':''}${Math.round(cPnl*rt).toLocaleString()} THB</span>
+    </td>
+    <td colspan="2"></td>
+  </tr>` : '';
+
+  /* ── Open risk row ── */
+  const openSumRow = openRows.length ? `<tr class="sum-open">
+    <td colspan="2" style="padding-left:12px">
+      <span class="sum-lbl" style="color:var(--b)">◎ Open</span>
+      <span class="sum-sub" style="color:var(--t3)">${openRows.length} positions</span>
+    </td>
+    <td></td><td></td><td></td><td></td>
+    <td style="text-align:right">
+      <span class="sum-num" style="color:var(--r)">-$${oBuy.toFixed(2)}</span>
+      <span class="sum-sub" style="color:var(--r)">${Math.round(oBuy*rt).toLocaleString()}฿ at risk</span>
+    </td>
+    <td style="text-align:center">
+      <span class="sum-num" style="color:var(--t1)">${oQty}</span>
+      <span class="sum-sub" style="color:var(--t3)">contracts</span>
+    </td>
+    <td colspan="7"></td>
+  </tr>` : '';
+
+  G('tbody').innerHTML = rowsHTML + closedSumRow + openSumRow;
+}
+
+function srt(k){ sk===k ? sd*=-1 : (sk=k, sd=1); rTbl(); }
+
+/* ══════════════════════════════════════════  DATALIST  */
+function rDatalist(){
+  const tks = [...new Set(T.map(t=>t.ticker))].sort();
+  G('tk-dl').innerHTML = tks.map(t=>`<option value="${t}">`).join('');
+}
+
+/* ══════════════════════════════════════════  FORM  */
+function openForm(id){
+  eid=id; G('ferr').textContent='';
+  if(id){
+    const t=T.find(t=>t.id===id);
+    G('ftitle').textContent = `Edit Trade — ${t.ticker} #${t.id}`;
+    G('sbtn').textContent   = 'Update Trade';
+    G('fTk').value    = t.ticker;
+    G('fTp').value    = t.type;
+    G('fSk').value    = t.strikePrice!=null ? t.strikePrice : '';
+    G('fEd').value    = t.expDate||'';
+    G('fUp').value    = t.underlyingPrice!=null ? t.underlyingPrice : '';
+    G('fNotes').value = t.notes||'';
+    G('fBd').value    = t.buyDate||'';
+    G('fQty').value   = t.qty||1;
+    G('fBp').value    = t.buyPrice||'';
+    G('fSd').value    = t.sellDate||'';
+    G('fSq').value    = t.sellQty||'';
+    G('fSp').value    = t.sellPrice!=null ? t.sellPrice : '';
+  } else {
+    G('ftitle').textContent='New Trade'; G('sbtn').textContent='Save Trade';
+    ['fTk','fSk','fEd','fUp','fNotes','fBd','fSd','fSq','fSp','fBp'].forEach(i=>G(i).value='');
+    G('fQty').value=1; G('fTp').value='Call';
+  }
+  G('V-main').style.display='none';
+  G('V-form').style.display='block';
+  cPrev();
+}
+
+function closeForm(){
+  G('V-main').style.display='block';
+  G('V-form').style.display='none';
+  eid=null;
+}
+
+function cPrev(){
+  const b=parseFloat(G('fBp').value), s=parseFloat(G('fSp').value);
+  const el=G('prev-val'), sb=G('prev-sub');
+  if(isNaN(b)){el.textContent='—';el.style.color='var(--t3)';sb.textContent='';return;}
+  const p = isNaN(s) ? -b : s-b;
+  el.textContent = `${p>=0?'+':''}${p.toFixed(2)} USD`;
+  el.style.color = p>=0?'#3fb950':'#f85149';
+  sb.textContent = isNaN(s)
+    ? 'Open position — premium at risk'
+    : `${p>=0?'✓ Profit':'✕ Loss'}: ≈ ${Math.abs(Math.round(p*RATE())).toLocaleString()} THB`;
+}
+
+function saveTrd(){
+  const tk  = G('fTk').value.trim().toUpperCase();
+  const tp  = G('fTp').value;
+  const sk_ = parseFloat(G('fSk').value);
+  const ed  = G('fEd').value||null;
+  const up_ = parseFloat(G('fUp').value);
+  const notes = G('fNotes').value.trim();
+  const bd  = G('fBd').value;
+  const qt  = parseInt(G('fQty').value)||1;
+  const bp  = parseFloat(G('fBp').value);
+  const sd2 = G('fSd').value||null;
+  const sq  = parseInt(G('fSq').value)||null;
+  const _sp = parseFloat(G('fSp').value);
+  const sp  = (sd2&&!isNaN(_sp)) ? _sp : null;
+
+  const err = m=>{G('ferr').textContent='⚠  '+m;};
+  if(!tk)              return err('กรุณาใส่ Ticker Symbol');
+  if(!bd)              return err('กรุณาเลือก Buy Date');
+  if(isNaN(bp)||bp<=0) return err('กรุณาใส่ Buy Price > 0');
+
+  const obj = {
+    ticker:tk, type:tp,
+    strikePrice:    !isNaN(sk_)&&sk_>0  ? sk_ : null,
+    expDate: ed,
+    underlyingPrice:!isNaN(up_)&&up_>0  ? up_ : null,
+    notes,
+    buyDate:bd, qty:qt, buyPrice:bp,
+    sellDate:sd2, sellQty:sd2?sq:null, sellPrice:sp
+  };
+
+  if(eid){
+    const i=T.findIndex(t=>t.id===eid);
+    T[i]={...T[i],...obj};
+    toast(`Updated ${tk} #${eid}`);
+  } else {
+    const mx=T.reduce((m,t)=>Math.max(m,t.id),0);
+    T.push({id:mx+1,...obj});
+    toast(`Added ${tk} — ${tp}`);
+  }
+  persist(); closeForm(); rAll();
+}
+
+function delTrd(id){
+  const t=T.find(t=>t.id===id);
+  if(!confirm(`Delete trade: ${t.ticker} #${id}\n\nAre you sure?`)) return;
+  T=T.filter(t=>t.id!==id);
+  persist(); rAll();
+  toast(`Deleted ${t.ticker} #${id}`, true);
+}
+
+/* ══════════════════════════════════════════  EXPORT / IMPORT  */
+function exportJSON(){
+  const json = JSON.stringify(T, null, 2);
+  const blob = new Blob([json],{type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `optionsdesk-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Exported ' + T.length + ' trades ✓');
+}
+
+function openImport(){ G('import-modal').classList.add('show'); G('import-json').value=''; G('import-err').textContent=''; }
+function closeImport(){ G('import-modal').classList.remove('show'); }
+
+function doImport(replace){
+  try{
+    const raw = G('import-json').value.trim();
+    if(!raw) return (G('import-err').textContent='กรุณาวาง JSON');
+    const data = JSON.parse(raw);
+    if(!Array.isArray(data)) throw new Error('ต้องเป็น array');
+    if(replace){
+      T = data;
+      toast(`Replaced — ${T.length} trades loaded`);
+    } else {
+      const existIds = new Set(T.map(t=>t.id));
+      let added=0;
+      data.forEach(t=>{
+        if(!existIds.has(t.id)){T.push({underlyingPrice:null,notes:'',...t});added++;}
+      });
+      toast(`Merged — ${added} new trades added`);
+    }
+    persist(); closeImport(); rAll();
+  }catch(e){ G('import-err').textContent='JSON ไม่ถูกต้อง: '+e.message; }
+}
+
+/* ══════════════════════════════════════════  TOAST  */
+let toastTimer;
+function toast(msg, isErr=false){
+  const el=G('toast');
+  el.textContent=(isErr?'✕  ':'✓  ')+msg;
+  Object.assign(el.style,{
+    display:'block',
+    background: isErr?'rgba(248,81,73,.22)':'rgba(63,185,80,.22)',
+    color:       isErr?'#f85149':'#3fb950',
+    border:     `1px solid ${isErr?'rgba(248,81,73,.35)':'rgba(63,185,80,.35)'}`,
+  });
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.style.display='none', 2800);
+}
+
+init();
+</script>
+</body>
+</html>
